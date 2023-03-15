@@ -25,8 +25,8 @@
 		};
 	};
 
-	sram0: memory@c0000000 {
-		reg = <0xc0000000 DT_SIZE_M(1)>;
+	sram0: memory@80200000 {
+		reg = <0x80200000 DT_SIZE_M(1)>;
 	};
 };
 
