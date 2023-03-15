@@ -14,8 +14,8 @@
 	compatible = "fsl,mimx93";
 
 	chosen {
-		zephyr,console = &lpuart2;
-		zephyr,shell-uart = &lpuart2;
+		zephyr,console = &lpuart1;
+		zephyr,shell-uart = &lpuart1;
 		zephyr,sram = &sram0;
 	};
 
@@ -30,10 +30,9 @@
 	};
 };
 
-&lpuart2 {
+&lpuart1 {
 	status = "okay";
 	current-speed = <115200>;
-	/* clocks = <&ccm IMX_CCM_UART4_CLK 0x6c 24>; */
-	pinctrl-0 = <&uart2_default>;
+	pinctrl-0 = <&uart1_default>;
 	pinctrl-names = "default";
 };
