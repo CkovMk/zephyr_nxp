@@ -6,7 +6,6 @@
 
 #define DT_DRV_COMPAT nxp_imx_ccm_rev2
 #include <errno.h>
-#include <soc.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/dt-bindings/clock/imx_ccm_rev2.h>
 #include <fsl_clock.h>
@@ -51,6 +50,7 @@ static int mcux_ccm_get_subsys_rate(const struct device *dev,
 
 #ifdef CONFIG_UART_MCUX_LPUART
 	case IMX_CCM_LPUART1_CLK:
+	case IMX_CCM_LPUART2_CLK:
 		clock_root = kCLOCK_Root_Lpuart1 + instance;
 		break;
 #endif
@@ -106,13 +106,28 @@ static int mcux_ccm_get_subsys_rate(const struct device *dev,
 	default:
 		return -EINVAL;
 	}
-
+#ifdef CONFIG_SOC_MIMX93_A55
+	*rate = CLOCK_GetIpFreq(clock_root);
+#else
 	*rate = CLOCK_GetRootClockFreq(clock_root);
+#endif
 	return 0;
 }
 
 static int mcux_ccm_init(const struct device *dev)
 {
+#ifdef CONFIG_SOC_MIMX93_A55
+	g_clockSourceFreq[kCLOCK_Osc24M] 			= 24000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1]			= 4000000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd0]		= 1000000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd0Div2]	= 500000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd1]		= 800000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd1Div2]	= 400000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd2]		= 625000000U;
+	g_clockSourceFreq[kCLOCK_SysPll1Pfd2Div2]	= 312500000U;
+	g_clockSourceFreq[kCLOCK_AudioPll1]			= 393216000U;
+	g_clockSourceFreq[kCLOCK_AudioPll1Out]		= 393216000U;
+#endif
 	return 0;
 }
 
