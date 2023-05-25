@@ -45,25 +45,6 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE(DT_NODELABEL(iomuxc)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
-	MMU_REGION_FLAT_ENTRY("GPIO1",
-			      DT_REG_ADDR(DT_NODELABEL(gpio1)),
-			      DT_REG_SIZE(DT_NODELABEL(gpio1)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("GPIO2",
-			      DT_REG_ADDR(DT_NODELABEL(gpio2)),
-			      DT_REG_SIZE(DT_NODELABEL(gpio2)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("GPIO3",
-			      DT_REG_ADDR(DT_NODELABEL(gpio3)),
-			      DT_REG_SIZE(DT_NODELABEL(gpio3)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("GPIO4",
-			      DT_REG_ADDR(DT_NODELABEL(gpio4)),
-			      DT_REG_SIZE(DT_NODELABEL(gpio4)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 };
 
 const struct arm_mmu_config mmu_config = {

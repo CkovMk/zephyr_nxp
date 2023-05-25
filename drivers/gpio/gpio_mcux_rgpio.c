@@ -24,10 +24,21 @@ struct gpio_pin_gaps {
 	uint8_t len;
 };
 
+#ifdef CONFIG_MMU
+/* Required by DEVICE_MMIO_NAMED_* macros */
+#define DEV_CFG(_dev) \
+	((const struct mcux_rgpio_config *)(_dev)->config)
+#define DEV_DATA(_dev) ((struct mcux_rgpio_data *)(_dev)->data)
+#endif /* CONFIG_MMU */
+
 struct mcux_rgpio_config {
 	/* gpio_driver_config needs to be first */
 	struct gpio_driver_config common;
+#ifdef CONFIG_MMU
+	DEVICE_MMIO_NAMED_ROM(reg_base);
+#else /* CONFIG_MMU */
 	RGPIO_Type *base;
+#endif /* CONFIG_MMU */
 #ifdef CONFIG_PINCTRL
 	const struct pinctrl_soc_pinmux *pin_muxes;
 	const struct gpio_pin_gaps *pin_gaps;
@@ -39,14 +50,21 @@ struct mcux_rgpio_config {
 struct mcux_rgpio_data {
 	/* gpio_driver_data needs to be first */
 	struct gpio_driver_data general;
+#ifdef CONFIG_MMU
+	DEVICE_MMIO_NAMED_RAM(reg_base);
+#endif /* CONFIG_MMU */
 	/* port ISR callback routine address */
 	sys_slist_t callbacks;
 };
 
 static inline RGPIO_Type* mcux_rgpio_get_base_addr(const struct device *dev)
 {
+#ifdef CONFIG_MMU
+	return (RGPIO_Type*)DEVICE_MMIO_NAMED_GET(dev, reg_base);
+#else /* CONFIG_MMU */
 	const struct mcux_rgpio_config *config = dev->config;
 	return config->base;
+#endif /* CONFIG_MMU */
 }
 
 static int mcux_rgpio_configure(const struct device *dev,
@@ -285,6 +303,43 @@ static const struct gpio_driver_api mcux_rgpio_driver_api = {
 		irq_enable(DT_INST_IRQ_BY_IDX(n, i, irq));		\
 	} while (false)
 
+#ifdef CONFIG_MMU
+#define MCUX_RGPIO_INIT(n)						\
+	MCUX_RGPIO_PIN_DECLARE(n)					\
+	static int mcux_rgpio_##n##_init(const struct device *dev);	\
+									\
+	static const struct mcux_rgpio_config mcux_rgpio_##n##_config = {\
+		.common = {						\
+			.port_pin_mask = GPIO_PORT_PIN_MASK_FROM_DT_INST(n),\
+		},							\
+		DEVICE_MMIO_NAMED_ROM_INIT(reg_base, DT_DRV_INST(n)), \
+		MCUX_RGPIO_PIN_INIT(n)					\
+	};								\
+									\
+	static struct mcux_rgpio_data mcux_rgpio_##n##_data;		\
+									\
+	DEVICE_DT_INST_DEFINE(n,					\
+			    mcux_rgpio_##n##_init,			\
+			    NULL,					\
+			    &mcux_rgpio_##n##_data,			\
+			    &mcux_rgpio_##n##_config,			\
+			    POST_KERNEL,				\
+			    CONFIG_GPIO_INIT_PRIORITY,			\
+			    &mcux_rgpio_driver_api);			\
+									\
+	static int mcux_rgpio_##n##_init(const struct device *dev)	\
+	{								\
+		DEVICE_MMIO_NAMED_MAP(dev, reg_base, K_MEM_CACHE_NONE); \
+		IF_ENABLED(DT_INST_IRQ_HAS_IDX(n, 0),			\
+		   (MCUX_RGPIO_IRQ_INIT(n, 0);))		\
+									\
+		IF_ENABLED(DT_INST_IRQ_HAS_IDX(n, 1),			\
+			   (MCUX_RGPIO_IRQ_INIT(n, 1);))		\
+									\
+		return 0;						\
+	}
+
+#else /* CONFIG_MMU */
 #define MCUX_RGPIO_INIT(n)						\
 	MCUX_RGPIO_PIN_DECLARE(n)					\
 	static int mcux_rgpio_##n##_init(const struct device *dev);	\
@@ -318,5 +373,6 @@ static const struct gpio_driver_api mcux_rgpio_driver_api = {
 									\
 		return 0;						\
 	}
+#endif /* CONFIG_MMU */
 
 DT_INST_FOREACH_STATUS_OKAY(MCUX_RGPIO_INIT)
