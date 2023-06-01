@@ -85,26 +85,6 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE(DT_NODELABEL(lpi2c4)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
-	MMU_REGION_FLAT_ENTRY("I2C5",
-			      DT_REG_ADDR(DT_NODELABEL(lpi2c5)),
-			      DT_REG_SIZE(DT_NODELABEL(lpi2c5)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("I2C6",
-			      DT_REG_ADDR(DT_NODELABEL(lpi2c6)),
-			      DT_REG_SIZE(DT_NODELABEL(lpi2c6)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("I2C7",
-			      DT_REG_ADDR(DT_NODELABEL(lpi2c7)),
-			      DT_REG_SIZE(DT_NODELABEL(lpi2c7)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("I2C8",
-			      DT_REG_ADDR(DT_NODELABEL(lpi2c8)),
-			      DT_REG_SIZE(DT_NODELABEL(lpi2c8)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
 	MMU_REGION_FLAT_ENTRY("SPI1",
 			      DT_REG_ADDR(DT_NODELABEL(lpspi1)),
 			      DT_REG_SIZE(DT_NODELABEL(lpspi1)),
@@ -123,26 +103,6 @@ static const struct arm_mmu_region mmu_regions[] = {
 	MMU_REGION_FLAT_ENTRY("SPI4",
 			      DT_REG_ADDR(DT_NODELABEL(lpspi4)),
 			      DT_REG_SIZE(DT_NODELABEL(lpspi4)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("SPI5",
-			      DT_REG_ADDR(DT_NODELABEL(lpspi5)),
-			      DT_REG_SIZE(DT_NODELABEL(lpspi5)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("SPI6",
-			      DT_REG_ADDR(DT_NODELABEL(lpspi6)),
-			      DT_REG_SIZE(DT_NODELABEL(lpspi6)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("SPI7",
-			      DT_REG_ADDR(DT_NODELABEL(lpspi7)),
-			      DT_REG_SIZE(DT_NODELABEL(lpspi7)),
-			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("SPI8",
-			      DT_REG_ADDR(DT_NODELABEL(lpspi8)),
-			      DT_REG_SIZE(DT_NODELABEL(lpspi8)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 };
 
