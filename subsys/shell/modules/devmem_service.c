@@ -95,6 +95,12 @@ static int memory_dump(const struct shell *sh, mem_addr_t phys_addr, size_t size
 		shell_hexdump_line(sh, addr, data, MIN(size, SHELL_HEXDUMP_BYTES_IN_LINE));
 	}
 
+#if defined(CONFIG_MMU) || defined(CONFIG_PCIE)
+	k_mem_unmap((mm_reg_t *)&addr, size);
+
+	shell_print(sh, "Un-mapped 0x%lx\n", addr);
+#endif /* defined(CONFIG_MMU) || defined(CONFIG_PCIE) */
+
 	return 0;
 }
 
@@ -104,34 +110,44 @@ static int cmd_dump(const struct shell *sh, size_t argc, char **argv)
 	size_t size = -1;
 	size_t width = 32;
 	mem_addr_t addr = -1;
+	int argidx = 1;
 
-	optind = 1;
-	while ((rv = getopt(argc, argv, "a:s:w:")) != -1) {
-		switch (rv) {
-		case 'a':
-			addr = (mem_addr_t)strtoul(optarg, NULL, 16);
+	if(argc != 7) {
+		shell_error(sh, "unsupported options");
+		shell_help(sh);
+		return SHELL_CMD_HELP_PRINTED;
+	}
+
+	/* Parse options */
+	while (argidx < argc && strncmp(argv[argidx], "-", 1) == 0) {
+		if (strcmp(argv[argidx], "--") == 0) {
+			argidx++;
+			break;
+		} else if (strcmp(argv[argidx], "-a") == 0) {
+			addr = (mem_addr_t)strtoul(argv[argidx + 1], NULL, 16);
 			if (addr == 0 && errno == EINVAL) {
-				shell_error(sh, "invalid addr '%s'", optarg);
+				shell_error(sh, "invalid addr '%s'", argv[argidx + 1]);
 				return -EINVAL;
 			}
-			break;
-		case 's':
-			size = (size_t)strtoul(optarg, NULL, 0);
+			argidx+=2;
+		} else if (strcmp(argv[argidx], "-s") == 0) {
+			size = (size_t)strtoul(argv[argidx + 1], NULL, 0);
 			if (size == 0 && errno == EINVAL) {
-				shell_error(sh, "invalid size '%s'", optarg);
+				shell_error(sh, "invalid size '%s'", argv[argidx + 1]);
 				return -EINVAL;
 			}
-			break;
-		case 'w':
-			width = (size_t)strtoul(optarg, NULL, 0);
+			argidx+=2;
+		} else if (strcmp(argv[argidx], "-w") == 0) {
+			width = (size_t)strtoul(argv[argidx + 1], NULL, 0);
 			if (width == 0 && errno == EINVAL) {
-				shell_error(sh, "invalid width '%s'", optarg);
+				shell_error(sh, "invalid width '%s'", argv[argidx + 1]);
 				return -EINVAL;
 			}
-			break;
-		case '?':
-		default:
-			return -EINVAL;
+			argidx+=2;
+		}else {
+			shell_error(sh, "unsupported option %s", argv[argidx]);
+			shell_help(sh);
+			return SHELL_CMD_HELP_PRINTED;
 		}
 	}
 
