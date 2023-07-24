@@ -27,6 +27,10 @@ config VIDEO_MT9M114_INIT_PRIORITY
 	int "MT9M114 initialization priority"
 	default 70
 
+config VIDEO_PARALLEL_CSI_INIT_PRIORITY
+	int "Parallel CSI initialization priority"
+	default 80
+
 config VIDEO_BUFFER_POOL_SZ_MAX
 	int "Size of the largest buffer in the video pool"
 	default 1048576
@@ -40,6 +44,8 @@ config VIDEO_BUFFER_POOL_ALIGN
 	default 64
 
 source "drivers/video/Kconfig.mcux_csi"
+
+source "drivers/video/Kconfig.mcux_parallel_csi"
 
 source "drivers/video/Kconfig.sw_generator"
 
