@@ -85,6 +85,11 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE(DT_NODELABEL(lpi2c4)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
+	MMU_REGION_FLAT_ENTRY("I2C8",
+			      DT_REG_ADDR(DT_NODELABEL(lpi2c8)),
+			      DT_REG_SIZE(DT_NODELABEL(lpi2c8)),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
 	MMU_REGION_FLAT_ENTRY("SPI1",
 			      DT_REG_ADDR(DT_NODELABEL(lpspi1)),
 			      DT_REG_SIZE(DT_NODELABEL(lpspi1)),

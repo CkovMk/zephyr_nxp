@@ -5,4 +5,63 @@ description: MT9M114 CMOS video sensor
 
 compatible: "aptina,mt9m114"
 
-include: i2c-device.yaml
+include: [i2c-device.yaml, pinctrl-device.yaml]
+
+properties:
+  exp-sel-gpios:
+    type: phandle-array
+    required: true
+
+  ctrl-dovdd-gpios:
+    type: phandle-array
+    required: true
+    description:
+      DOVDD control gpio. Driver will initialize this GPIO to active high
+
+  ctrl-avdd-gpios:
+    type: phandle-array
+    required: true
+    description:
+      AVDD control gpio. Driver will initialize this GPIO to active high
+
+  ctrl-dvdd-gpios:
+    type: phandle-array
+    required: true
+    description:
+      DVDD control gpio. Driver will initialize this GPIO to active high
+
+  ctrl-extclk-gpios:
+    type: phandle-array
+    required: true
+    description:
+      EXTCLK control gpio. Driver will initialize this GPIO to active high
+
+  ctrl-9509-gpios:
+    type: phandle-array
+    required: true
+    description:
+      PCA9509 control gpio. Driver will initialize this GPIO to active high
+
+  ctrl-4t245-gpios:
+    type: phandle-array
+    required: true
+    description:
+      74AVC4T245PW control gpio. Driver will initialize this GPIO to active low
+
+  ctrl-16t245-gpios:
+    type: phandle-array
+    required: true
+    description:
+      74AVC16T245DGG control gpio. Driver will initialize this GPIO to active low
+
+  powerdown-gpios:
+    type: phandle-array
+    required: true
+    description:
+      power down gpio. Driver will initialize this GPIO to active high
+
+  reset-gpios:
+    type: phandle-array
+    required: true
+    description:
+      reset gpio. Driver will initialize this GPIO to active low
