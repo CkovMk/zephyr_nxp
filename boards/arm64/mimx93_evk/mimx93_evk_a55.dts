@@ -176,6 +176,11 @@
 	};
 };
 
+&isi {
+	status = "okay";
+	source = <&parallel_csi>;
+};
+
 &flexcan2 {
 	pinctrl-0 = <&flexcan2_default>;
 	pinctrl-names = "default";
