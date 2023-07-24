@@ -167,6 +167,15 @@
 	};
 };
 
+&media_blk_ctrl {
+	status = "okay";
+
+	parallel_csi: pcsi {
+		status = "okay";
+		sensor = <&mt9m114>;
+	};
+};
+
 &flexcan2 {
 	pinctrl-0 = <&flexcan2_default>;
 	pinctrl-names = "default";
