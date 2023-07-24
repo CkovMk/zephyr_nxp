@@ -568,6 +568,12 @@ void video_buffer_release(struct video_buffer *buf);
 
 /* RGB formats */
 #define VIDEO_PIX_FMT_RGB565 video_fourcc('R', 'G', 'B', 'P') /* 16  RGB-5-6-5 */
+#define VIDEO_PIX_FMT_RGB24 video_fourcc('R', 'G', 'B', '3') /* 24  RGB-8-8-8 */
+
+
+/* YUV formats */
+#define VIDEO_PIX_FMT_YUYV video_fourcc('Y', 'U', 'Y', 'V') /* 16  YUV 4:2:2 */
+#define VIDEO_PIX_FMT_UYVY video_fourcc('U', 'Y', 'V', 'Y') /* 16  YUV 4:2:2 */
 
 /* JPEG formats */
 #define VIDEO_PIX_FMT_JPEG   video_fourcc('J', 'P', 'E', 'G') /*  8  JPEG */

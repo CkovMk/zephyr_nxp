@@ -13,11 +13,19 @@ menuconfig VIDEO
 
 if VIDEO
 
+module = VIDEO
+module-str = video
+source "subsys/logging/Kconfig.template.log_config"
+
 config VIDEO_INIT_PRIORITY
 	int "Video initialization priority"
 	default 90
 	help
 	  System initialization priority for video drivers.
+
+config VIDEO_MT9M114_INIT_PRIORITY
+	int "MT9M114 initialization priority"
+	default 70
 
 config VIDEO_BUFFER_POOL_SZ_MAX
 	int "Size of the largest buffer in the video pool"
