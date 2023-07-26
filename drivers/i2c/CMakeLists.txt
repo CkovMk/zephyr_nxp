@@ -2,6 +2,8 @@
 
 zephyr_library()
 
+zephyr_include_directories(${ZEPHYR_BASE}/drivers/misc)
+
 zephyr_library_sources(i2c_common.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_SHELL		i2c_shell.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_BITBANG		i2c_bitbang.c)
@@ -18,6 +20,7 @@ zephyr_library_sources_ifdef(CONFIG_I2C_XEC		i2c_mchp_xec.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_MCUX		i2c_mcux.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_MCUX_FLEXCOMM	i2c_mcux_flexcomm.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_MCUX_LPI2C	i2c_mcux_lpi2c.c)
+zephyr_library_sources_ifdef(CONFIG_I2C_MCUX_FLEXIO 	i2c_mcux_flexio.c)
 zephyr_library_sources_ifdef(CONFIG_I2C_EMUL		i2c_emul.c)
 zephyr_library_sources_ifdef(CONFIG_NRFX_TWI		i2c_nrfx_twi.c)
 zephyr_library_sources_ifdef(CONFIG_NRFX_TWIM		i2c_nrfx_twim.c)

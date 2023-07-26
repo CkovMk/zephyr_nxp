@@ -169,4 +169,6 @@ config I2C_RV32M1_LPI2C
 	help
 	  Enable the RV32M1 LPI2C driver.
 
+source "drivers/i2c/Kconfig.mcux_flexio"
+
 endif # I2C

@@ -1,0 +1,26 @@
+# Copyright (c) 2023, STRIM, ALC
+# SPDX-License-Identifier: Apache-2.0
+
+description: NXP i.MX FlexIO I2C controller
+
+compatible: "nxp,imx-flexio-i2c-master"
+
+include: [i2c-controller.yaml, imx-flexio-common.yaml]
+
+properties:
+  sda-pin:
+    type: int
+    required: true
+    description: |
+      Pin select for data.
+  scl-pin:
+    type: int
+    required: true
+    description: |
+      Pin select for clock.
+
+child-binding:
+  description: NXP FlexIO port
+
+  include: i2c-device.yaml
+

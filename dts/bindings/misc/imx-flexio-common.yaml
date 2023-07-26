@@ -1,0 +1,18 @@
+# Copyright (c) 2023, STRIM, ALC
+# SPDX-License-Identifier: Apache-2.0
+
+description: NXP i.MX FlexIO controller
+
+include: [pinctrl-device.yaml]
+
+properties:
+  shifters:
+    type: array
+    required: true
+    description: |
+      Shifter index used in FlexIO interface.
+  timers:
+    type: array
+    required: true
+    description: |
+      Timer index used in FlexIO interface.

@@ -1,0 +1,10 @@
+# Copyright (c) 2023, STRIM, ALC
+# SPDX-License-Identifier: Apache-2.0
+
+config I2C_MCUX_FLEXIO
+	bool "MCUX FlexIO I2C driver"
+	depends on HAS_MCUX_FLEXIO
+	depends on CLOCK_CONTROL
+	select MCUX_FLEXIO
+	help
+	  Enable support for MCUX FlexIO I2C driver.

@@ -126,6 +126,11 @@ config HAS_MCUX_IOMUXC
 	help
 	  Set if the iMX I/O mux controller (IOMUXC) is present in the SoC.
 
+config HAS_MCUX_FLEXIO
+	bool
+	help
+	  Set if the FlexIO module is presents in the SoC.
+
 config HAS_MCUX_LPI2C
 	bool
 	help

@@ -36,6 +36,15 @@ static int mcux_ccm_get_subsys_rate(const struct device *dev,
 	peripheral = (clock_name & IMX_CCM_PERIPHERAL_MASK);
 	instance = (clock_name & IMX_CCM_INSTANCE_MASK);
 	switch (peripheral) {
+#ifdef CONFIG_MCUX_FLEXIO
+	case IMX_CCM_FLEXIO1_CLK:
+		clock_root = kCLOCK_Root_Flexio1 + instance;
+		break;
+	case IMX_CCM_FLEXIO2_CLK:
+		clock_root = kCLOCK_Root_Flexio2 + instance;
+		break;
+#endif
+
 #ifdef CONFIG_I2C_MCUX_LPI2C
 	case IMX_CCM_LPI2C1_CLK:
 		clock_root = kCLOCK_Root_Lpi2c1 + instance;
