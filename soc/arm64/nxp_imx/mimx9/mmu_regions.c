@@ -30,6 +30,16 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE(DT_NODELABEL(ana_pll)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
+	MMU_REGION_FLAT_ENTRY("FLEXSPI1_REG",
+			      DT_REG_ADDR_BY_IDX(DT_NODELABEL(flexspi1), 0),
+			      DT_REG_SIZE_BY_IDX(DT_NODELABEL(flexspi1), 0),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("FLEXSPI1_MAP",
+			      DT_REG_ADDR_BY_IDX(DT_NODELABEL(flexspi1), 1),
+			      DT_REG_SIZE_BY_IDX(DT_NODELABEL(flexspi1), 1),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
 	MMU_REGION_FLAT_ENTRY("UART1",
 			      DT_REG_ADDR(DT_NODELABEL(lpuart1)),
 			      DT_REG_SIZE(DT_NODELABEL(lpuart1)),

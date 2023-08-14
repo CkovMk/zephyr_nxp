@@ -83,6 +83,10 @@
 #define IMX_CCM_GPT5_CLK		0x1004UL
 #define IMX_CCM_GPT6_CLK		0x1005UL
 
+/* FlexSPI */
+#define IMX_CCM_FLEXSPI_CLK		0x1100UL
+#define IMX_CCM_FLEXSPI1_CLK		0x1100UL
+
 /* SAI */
 #define IMX_CCM_SAI_CLK        0x2000UL
 #define IMX_CCM_SAI1_CLK        0x2000UL

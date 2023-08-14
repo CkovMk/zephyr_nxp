@@ -46,6 +46,12 @@ static int mcux_ccm_get_clock_root(clock_control_subsys_t sub_system,
 		break;
 #endif
 
+#ifdef IMX_CCM_FLEXSPI_CLK
+	case IMX_CCM_FLEXSPI_CLK:
+		clock_root = kCLOCK_Root_Flexspi1 + instance;
+		break;
+#endif
+
 #ifdef CONFIG_UART_MCUX_LPUART
 	case IMX_CCM_LPUART1_CLK:
 		*clock_root = kCLOCK_Root_Lpuart1 + instance;
@@ -262,6 +268,8 @@ static int mcux_ccm_init(const struct device *dev)
 		.odiv = 10,
 	};
 
+	mcux_ccm_sybsys_config_t cfg;
+
 	/** PLL_CLKx = (24M / rdiv * (mfi + mfn/mfd) / odiv) */
 
 	CLOCK_PllInit(AUDIOPLL, &audioPllCfg);
@@ -279,6 +287,12 @@ static int mcux_ccm_init(const struct device *dev)
 	g_clockSourceFreq[kCLOCK_AudioPll1Out]		= 393216000U;
 	g_clockSourceFreq[kCLOCK_VideoPll1]			= 420000000U;
 	g_clockSourceFreq[kCLOCK_VideoPll1Out]		= 420000000U;
+
+	cfg.clockOff = false;
+	cfg.mux = kCLOCK_FLEXSPI1_ClockRoot_MuxSysPll1Pfd0;
+	cfg.div = 8; // 125MHz actual, 120MHz required
+
+	mcux_ccm_configure_subsys(dev, IMX_CCM_FLEXSPI1_CLK, &cfg);
 #endif
 	return 0;
 }
