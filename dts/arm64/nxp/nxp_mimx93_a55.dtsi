@@ -367,6 +367,11 @@
 				compatible = "nxp,imx93-parallel-csi";
 				status = "disabled";
 			};
+
+			parallel_disp_fmt: pdi {
+				compatible = "nxp,imx93-pdi";
+				status = "disabled";
+			};
 		};
 
 		isi: isi@4ae40000 {

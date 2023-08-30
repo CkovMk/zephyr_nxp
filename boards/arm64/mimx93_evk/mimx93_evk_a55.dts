@@ -203,3 +203,11 @@
 	clocks = <&ccm IMX_CCM_MEDIA_DISP_PIX_CLK 2 14>; //kCLOCK_VideoPll1: 420MHz
 	status = "disabled";
 };
+
+&parallel_disp_fmt {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinmux_parallel_disp>;
+	interface-pix-fmt = "rgb666";
+	enable-gpios = <&gpio_exp0 4 GPIO_ACTIVE_HIGH>;
+	status = "disabled";
+};
