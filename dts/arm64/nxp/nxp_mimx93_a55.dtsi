@@ -377,6 +377,14 @@
 			interrupt-parent = <&gic>;
 			status = "disabled";
 		};
+
+		lcdif: display-controller@4ae30000 {
+			compatible = "nxp,imx-lcdifv3";
+			reg = <0x4ae30000 0x10000>;
+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			interrupt-parent = <&gic>;
+			status = "disabled";
+		};
 	};
 };
 

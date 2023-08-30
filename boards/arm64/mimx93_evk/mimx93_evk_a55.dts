@@ -188,3 +188,18 @@
 	phys = <&flexcan2_phy>;
 	status = "disabled";
 };
+
+&lcdif {
+	width = <800>;
+	height = <480>;
+	polarity = <3>;
+	hsync = <48>;
+	hfp = <40>;
+	hbp = <40>;
+	vsync = <3>;
+	vfp = <13>;
+	vbp = <29>;
+	pixel-format = "argb-8888";
+	clocks = <&ccm IMX_CCM_MEDIA_DISP_PIX_CLK 2 14>; //kCLOCK_VideoPll1: 420MHz
+	status = "disabled";
+};

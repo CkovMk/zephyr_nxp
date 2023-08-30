@@ -129,6 +129,11 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_ADDR(DT_NODELABEL(isi)),
 			      DT_REG_SIZE(DT_NODELABEL(isi)),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("LCDIF",
+			      DT_REG_ADDR(DT_NODELABEL(lcdif)),
+			      DT_REG_SIZE(DT_NODELABEL(lcdif)),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 };
 
 const struct arm_mmu_config mmu_config = {
