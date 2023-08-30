@@ -372,6 +372,11 @@
 				compatible = "nxp,imx93-pdi";
 				status = "disabled";
 			};
+
+			ldb: ldb {
+				compatible = "nxp,imx93-ldb";
+				status = "disabled";
+			};
 		};
 
 		isi: isi@4ae40000 {

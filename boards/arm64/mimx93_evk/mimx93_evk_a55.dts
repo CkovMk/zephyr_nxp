@@ -190,18 +190,18 @@
 };
 
 &lcdif {
-	width = <800>;
-	height = <480>;
+	width = <1280>;
+	height = <800>;
 	polarity = <3>;
-	hsync = <48>;
-	hfp = <40>;
-	hbp = <40>;
-	vsync = <3>;
-	vfp = <13>;
-	vbp = <29>;
+	hsync = <32>;
+	hfp = <48>;
+	hbp = <80>;
+	vsync = <6>;
+	vfp = <3>;
+	vbp = <14>;
 	pixel-format = "argb-8888";
-	clocks = <&ccm IMX_CCM_MEDIA_DISP_PIX_CLK 2 14>; //kCLOCK_VideoPll1: 420MHz
-	status = "disabled";
+	clocks = <&ccm IMX_CCM_MEDIA_DISP_PIX_CLK 2 7>; //kCLOCK_VideoPll1: 420MHz
+	status = "okay";
 };
 
 &parallel_disp_fmt {
@@ -210,4 +210,17 @@
 	interface-pix-fmt = "rgb666";
 	enable-gpios = <&gpio_exp0 4 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
+};
+
+&ldb {
+	clocks = <&ccm IMX_CCM_MEDIA_LDB_CLK 2 1>; //kCLOCK_VideoPll1: 420MHz
+	bus-format = "RGB888_1X7X4_SPWG";
+	status = "okay";
+
+	lvds_panel: lvds_panel {
+		compatible = "nxp,lvds-panel";
+		lvds-blt-en-gpios = <&gpio_exp0 11 GPIO_ACTIVE_HIGH>;
+		lvds-blt-pwm-gpios = <&gpio_exp0 3 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
 };
