@@ -108,9 +108,9 @@ static const struct video_format_cap fmts[] = {
 	{
 		.pixelformat = VIDEO_PIX_FMT_UYVY,
 		.width_min = 1280,
-		.width_max = 720,
+		.width_max = 800,
 		.height_min = 1280,
-		.height_max = 720,
+		.height_max = 800,
 		.width_step = 0,
 		.height_step = 0,
 	},
@@ -138,7 +138,7 @@ static const struct mt9m114_resolution mt9m114_resolutions[] = {
 	},
 	[MT9M114_720P] = {
 		.width  = 1280,
-		.height = 720,
+		.height = 800,
 	},
 	{0},
 };
@@ -285,6 +285,8 @@ static struct mt9m114_reg mt9m114_regs_720p[] = {
 	{ 0xC91E, 2, 0x0000 },
 	{ 0xC920, 2, 0x00FF },
 	{ 0xC922, 2, 0x008F },
+	//{ 0xC84C, 1, 0x02 }, //test pattern
+	//{ 0xC84D, 1, 0x04 }, //color bar
 };
 
 static inline int i2c_burst_read16_dt(const struct i2c_dt_spec *spec,

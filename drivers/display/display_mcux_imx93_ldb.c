@@ -78,6 +78,8 @@ static int imx93_ldb_enable(const struct device *dev)
 	cfg->base->BUS_CONTROL.LDB_CTRL &= ~LDB_CH0_MODE_EN_MASK;
 	cfg->base->BUS_CONTROL.LDB_CTRL |= LDB_CH0_MODE_EN_TO_DI0;
 
+	cfg->base->BUS_CONTROL.LDB_CTRL |= (0x1 << 5);
+	LOG_INF("LDB_CTRL:0x%x", cfg->base->BUS_CONTROL.LDB_CTRL);
 	return 0;
 }
 
@@ -86,7 +88,7 @@ static int imx93_lvds_phy_init(const struct device *dev)
 	const struct imx93_ldb_config *cfg = dev->config;
 
 	cfg->base->BUS_CONTROL.LVDS = CC_ADJ(0x2) | PRE_EMPH_EN | PRE_EMPH_ADJ(0x3);
-
+	//cfg->base->BUS_CONTROL.LDB_CTRL |= (0x1 << 6);
 	return 0;
 }
 

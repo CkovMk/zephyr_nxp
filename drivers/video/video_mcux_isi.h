@@ -34,6 +34,11 @@ struct isi_output_format isi_output_formats[] = {
 		.fourcc		= VIDEO_PIX_FMT_YUYV,
 		.isi_format	= kISI_OutputYUV422_1P8P,
 		.bpp = 16,
+	},
+	{
+		.fourcc         = VIDEO_PIX_FMT_RGB32,
+		.isi_format     = kISI_OutputARGB8888,
+		.bpp = 32,
 	}
 };
 
@@ -49,8 +54,8 @@ typedef struct _isi_input_config
 static const isi_input_config_t isi_input_parallel =
 {
 	.pixelformat = VIDEO_PIX_FMT_UYVY,
-	.width = 640,
-	.height = 480,
+	.width = 1280,
+	.height = 800,
 	.bpp = 16,
 };
 

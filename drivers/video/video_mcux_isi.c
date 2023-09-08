@@ -46,6 +46,8 @@ struct video_mcux_isi_data {
 	struct video_buffer *active_vbuf[ISI_MAX_ACTIVE_BUF];
 
 	struct k_poll_signal *signal;
+
+	uint32_t timestamp[10];
 };
 
 #ifdef DEBUG
@@ -77,7 +79,9 @@ bool is_yuv(uint32_t pixelformat)
 
 bool is_rgb(uint32_t pixelformat)
 {
-	if ((pixelformat == VIDEO_PIX_FMT_RGB24) || (pixelformat == VIDEO_PIX_FMT_RGB565))
+	if ((pixelformat == VIDEO_PIX_FMT_RGB24) || (pixelformat == VIDEO_PIX_FMT_RGB565)
+		|| (pixelformat == VIDEO_PIX_FMT_RGB32))
+
 		return true;
 	else
 		return false;
@@ -110,13 +114,15 @@ static void __frame_done_handler(const struct device *dev)
 	uint32_t buffer_addr;
 	uint32_t intStatus;
 
+	data->timestamp[0] = k_uptime_get_32();
+	//printk("enter %s, timestamp=%u\n", __func__, data->timestamp[0]);
 	intStatus = ISI_GetInterruptStatus(config->base);
 	ISI_ClearInterruptStatus(config->base, intStatus);
 
-    if ((uint32_t)kISI_FrameReceivedInterrupt != ((uint32_t)kISI_FrameReceivedInterrupt & intStatus))
-    {
-        return;
-    }
+	if ((uint32_t)kISI_FrameReceivedInterrupt != ((uint32_t)kISI_FrameReceivedInterrupt & intStatus))
+	{
+		return;
+	}
 
 	buffer_addr = data->active_buffer[data->buffer_index];
 
@@ -150,6 +156,9 @@ static void __frame_done_handler(const struct device *dev)
 		k_poll_signal_raise(data->signal, result);
 	}
 
+	data->timestamp[1] = k_uptime_get_32();
+	//printk("exit %s, timestamp=%u\n", __func__, data->timestamp[1]);
+	//printk("irq enter %u, exit %u\n", data->timestamp[0], data->timestamp[1]);
 	return;
 }
 
@@ -201,7 +210,7 @@ static int video_mcux_isi_set_fmt(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	data->isi_config.isChannelBypassed = true;
+	data->isi_config.isChannelBypassed = false;
 	data->isi_config.inputWidth = camera_fmt.width;
 	data->isi_config.inputHeight = camera_fmt.height;
 	data->isi_config.outputFormat = isi_format;
@@ -223,17 +232,19 @@ static int video_mcux_isi_set_fmt(const struct device *dev,
 		if (is_rgb(camera_fmt.pixelformat)) {
 			ISI_SetColorSpaceConversionConfig(config->base, &csc_rgb2yuv);
 			ISI_EnableColorSpaceConversion(config->base, true);
+			printk("CSC rgb2yuv\n");
 		}
 	}
 	else if (is_rgb(data->output_pixelformat)) {
 		if (is_yuv(camera_fmt.pixelformat)) {
 			ISI_SetColorSpaceConversionConfig(config->base, &csc_yuv2rgb);
 			ISI_EnableColorSpaceConversion(config->base, true);
+			printk("CSC yuv2rgb\n");
 		}
 	}
 
 	data->buffer_index = 0;
-    data->is_transfer_started = false;
+	data->is_transfer_started = false;
 	data->active_buf_cnt = 0;
 
 	return 0;
@@ -262,7 +273,7 @@ static int video_mcux_isi_stream_start(const struct device *dev)
 {
 	const struct video_mcux_isi_config *config = dev->config;
 	struct video_mcux_isi_data *data = dev->data;
-    uint8_t i;
+	uint8_t i;
 	uint32_t buffer_addr;
 	struct video_buffer *vbuf;
 
@@ -275,10 +286,10 @@ static int video_mcux_isi_stream_start(const struct device *dev)
 
 	/* Only support single planar for now */
 	for (i = 0; i < ISI_MAX_ACTIVE_BUF; i++) {
-        buffer_addr = data->active_buffer[i];
-        ISI_SetOutputBufferAddr(config->base, i, buffer_addr, 0, 0);
+		buffer_addr = data->active_buffer[i];
+		ISI_SetOutputBufferAddr(config->base, i, buffer_addr, 0, 0);
 		vbuf = k_fifo_get(&data->fifo_in, K_NO_WAIT);
-    }
+	}
 
 	data->buffer_index = 0;
 	data->is_transfer_started = true;
@@ -369,6 +380,7 @@ static int video_mcux_isi_dequeue(const struct device *dev,
 		return -EAGAIN;
 	}
 
+	printk("irq %u, %u\n", data->timestamp[0], data->timestamp[1]);
 	return 0;
 }
 

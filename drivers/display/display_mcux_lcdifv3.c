@@ -74,6 +74,8 @@ static int mcux_lcdifv3_write(const struct device *dev, const uint16_t x,
 	k_sem_reset(&dev_data->sem);
 	k_sem_take(&dev_data->sem, K_FOREVER);
 
+	LCDIFV3_SetStrideBytes(config->base, desc->pitch);
+	LCDIFV3_SetLayerSize(config->base, desc->width, desc->height);
 	LCDIFV3_SetLayerBufferAddr(config->base, buf);
 	LCDIFV3_TriggerLayerShadowLoad(config->base);
 
@@ -212,6 +214,7 @@ static int mcux_lcdifv3_init(const struct device *dev)
 	LCDIFV3_EnableInterrupts(config->base, 0, kLCDIFV3_VerticalBlankingInterrupt);
 	LCDIFV3_EnablePlanePanic(config->base);
 	LCDIFV3_EnableDisplay(config->base, true);
+	//config->base->DISP_PARA |= (0x2 << 24);
 	LCDIFV3_SetLayerBufferAddr(config->base, (uint64_t)dev_data->fb[0]);
 	LCDIFV3_TriggerLayerShadowLoad(config->base);
 
