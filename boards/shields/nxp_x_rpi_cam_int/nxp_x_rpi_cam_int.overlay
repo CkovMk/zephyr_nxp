@@ -1,0 +1,38 @@
+/*
+ * Copyright 2023 NXP
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&lpi2c8 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_FAST>;
+	pinctrl-0 = <&i2c8_default>;
+	pinctrl-names = "default";
+
+    gpio_exp1: tca9538@70 {
+		compatible = "ti,tca9538";
+		reg = <0x70>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		ngpios = <8>;
+	};
+
+	mt9m114: mt9m114@48 {
+		compatible = "aptina,mt9m114";
+		reg = <0x48>;
+		pinctrl-0 = <&pinmux_parallel_csi>;
+		pinctrl-names = "default";
+		exp-sel-gpios = <&gpio_exp0 4 GPIO_ACTIVE_HIGH>;
+		ctrl-dovdd-gpios = <&gpio_exp1 0 GPIO_ACTIVE_HIGH>;
+		ctrl-avdd-gpios = <&gpio_exp1 1 GPIO_ACTIVE_HIGH>;
+		ctrl-dvdd-gpios = <&gpio_exp1 2 GPIO_ACTIVE_HIGH>;
+		ctrl-extclk-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
+		ctrl-9509-gpios = <&gpio_exp1 4 GPIO_ACTIVE_HIGH>;
+		ctrl-4t245-gpios = <&gpio_exp1 5 GPIO_ACTIVE_LOW>;
+		ctrl-16t245-gpios = <&gpio_exp1 6 GPIO_ACTIVE_LOW>;
+		powerdown-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
+		status = "okay";
+	};
+};

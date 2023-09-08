@@ -1,0 +1,25 @@
+/*
+ * Copyright 2023 NXP
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/{
+	leds {
+        status = "disabled";
+    };
+};
+
+&media_blk_ctrl {
+	status = "okay";
+
+	parallel_csi: pcsi {
+		status = "okay";
+		sensor = <&mt9m114>;
+	};
+};
+
+&isi {
+	status = "okay";
+	source = <&parallel_csi>;
+};
