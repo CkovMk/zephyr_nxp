@@ -8,10 +8,6 @@ compatible: "aptina,mt9m114"
 include: [i2c-device.yaml, pinctrl-device.yaml]
 
 properties:
-  exp-sel-gpios:
-    type: phandle-array
-    required: true
-
   ctrl-dovdd-gpios:
     type: phandle-array
     required: true
@@ -53,6 +49,10 @@ properties:
     required: true
     description:
       74AVC16T245DGG control gpio. Driver will initialize this GPIO to active low
+
+  regulator:
+    type: phandles
+    required: true
 
   powerdown-gpios:
     type: phandle-array

@@ -32,41 +32,49 @@ struct regulator_fixed_seq_data {
 static int regulator_fixed_seq_enable(const struct device *dev)
 {
 	const struct regulator_fixed_seq_config *cfg = dev->config;
-	int ret;
+	int ret = 0;
+
+	LOG_DBG("regulator %s enable\n", dev->name);
 
 	for(int i = 0; i < cfg->ngpios; ++i)
 	{
+		LOG_DBG("regulator set %s pin %d\n", cfg->enable_gpios[cfg->enable_seq[i]].port->name, cfg->enable_gpios[cfg->enable_seq[i]].pin);
 		ret = gpio_pin_set_dt(&cfg->enable_gpios[cfg->enable_seq[i]], 1);
 		if (ret < 0) {
 			return ret;
 		}
 		if(cfg->enable_delay[i] != 0U)
 		{
+			LOG_DBG("regulator delay %d us\n", cfg->enable_delay[i]);
 			k_sleep(K_USEC(cfg->enable_delay[i]));
 		}
 	}
 
-	return 0;
+	return ret;
 }
 
 static int regulator_fixed_seq_disable(const struct device *dev)
 {
 	const struct regulator_fixed_seq_config *cfg = dev->config;
-	int ret;
+	int ret = 0;
+
+	LOG_DBG("regulator %s disable\n", dev->name);
 
 	for(int i = 0; i < cfg->ngpios; ++i)
 	{
+		LOG_DBG("regulator clr %s pin %d\n", cfg->enable_gpios[cfg->enable_seq[i]].port->name, cfg->enable_gpios[cfg->enable_seq[i]].pin);
 		ret = gpio_pin_set_dt(&cfg->enable_gpios[cfg->disable_seq[i]], 0);
 		if (ret < 0) {
 			return ret;
 		}
 		if(cfg->disable_delay[i] != 0U)
 		{
+			LOG_DBG("regulator delay %d us\n", cfg->enable_delay[i]);
 			k_sleep(K_USEC(cfg->disable_delay[i]));
 		}
 	}
 
-	return 0;
+	return ret;
 }
 
 static const struct regulator_driver_api regulator_fixed_seq_api = {

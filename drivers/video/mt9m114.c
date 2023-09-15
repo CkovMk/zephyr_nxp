@@ -75,7 +75,6 @@ struct mt9m114_reg {
 struct mt9m114_config {
 	struct i2c_dt_spec i2c;
 	const struct pinctrl_dev_config *pincfg;
-	const struct gpio_dt_spec exp_sel_gpio;
 	const struct gpio_dt_spec ctrl_dovdd_gpio;
 	const struct gpio_dt_spec ctrl_avdd_gpio;
 	const struct gpio_dt_spec ctrl_dvdd_gpio;
@@ -85,6 +84,8 @@ struct mt9m114_config {
 	const struct gpio_dt_spec ctrl_16t245_gpio;
 	const struct gpio_dt_spec powerdown_gpio;
 	const struct gpio_dt_spec reset_gpio;
+	const struct device **power_regulator_list;
+	uint32_t power_regulator_count;
 };
 
 struct mt9m114_data {
@@ -656,14 +657,13 @@ static int mt9m114_configure_gpios(const struct mt9m114_config *cfg)
 {
 	int ret;
 
-	ret = gpio_pin_configure_dt(&cfg->exp_sel_gpio, GPIO_OUTPUT_ACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_dovdd_gpio, GPIO_OUTPUT_INACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_avdd_gpio, GPIO_OUTPUT_INACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_dvdd_gpio, GPIO_OUTPUT_INACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_extclk_gpio, GPIO_OUTPUT_INACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_9509_gpio, GPIO_OUTPUT_ACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_4t245_gpio, GPIO_OUTPUT_ACTIVE);
-	ret = gpio_pin_configure_dt(&cfg->ctrl_16t245_gpio, GPIO_OUTPUT_ACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_dovdd_gpio, GPIO_OUTPUT_INACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_avdd_gpio, GPIO_OUTPUT_INACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_dvdd_gpio, GPIO_OUTPUT_INACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_extclk_gpio, GPIO_OUTPUT_INACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_9509_gpio, GPIO_OUTPUT_ACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_4t245_gpio, GPIO_OUTPUT_ACTIVE);
+	//ret = gpio_pin_configure_dt(&cfg->ctrl_16t245_gpio, GPIO_OUTPUT_ACTIVE);
 	ret = gpio_pin_configure_dt(&cfg->powerdown_gpio, GPIO_OUTPUT_INACTIVE);
 	ret = gpio_pin_configure_dt(&cfg->reset_gpio, GPIO_OUTPUT_INACTIVE);
 
@@ -674,17 +674,25 @@ static int mt9m114_power_up(const struct mt9m114_config *cfg)
 {
 	int ret;
 
-	ret = gpio_pin_set_dt(&cfg->ctrl_dovdd_gpio, 1);
-	k_sleep(K_MSEC(10));
+	//ret = gpio_pin_set_dt(&cfg->ctrl_dovdd_gpio, 1);
+	//k_sleep(K_MSEC(10));
+	//ret = gpio_pin_set_dt(&cfg->ctrl_avdd_gpio, 1);
+	//k_sleep(K_MSEC(10));
+	//ret = gpio_pin_set_dt(&cfg->ctrl_dvdd_gpio, 1);
+	//k_sleep(K_MSEC(10));
+	//ret = gpio_pin_set_dt(&cfg->ctrl_extclk_gpio, 1);
+	//k_sleep(K_MSEC(10));
 
-	ret = gpio_pin_set_dt(&cfg->ctrl_avdd_gpio, 1);
-	k_sleep(K_MSEC(10));
-
-	ret = gpio_pin_set_dt(&cfg->ctrl_dvdd_gpio, 1);
-	k_sleep(K_MSEC(10));
-
-	ret = gpio_pin_set_dt(&cfg->ctrl_extclk_gpio, 1);
-	k_sleep(K_MSEC(10));
+	for(uint32_t i = 0; i < cfg->power_regulator_count; ++i)
+	{
+		printk("enable %d\n", i);
+		ret = regulator_enable(cfg->power_regulator_list[i]);
+		if(ret != 0)
+		{
+			LOG_ERR("regulator \"%s\" enable fail [%d]", cfg->power_regulator_list[i]->name, ret);
+			return ret;
+		}
+	}
 
 	return ret;
 }
@@ -700,7 +708,7 @@ static int mt9m114_reset(const struct mt9m114_config *cfg)
 	k_sleep(K_MSEC(20));
 
 	ret = gpio_pin_set_dt(&cfg->reset_gpio, 0);
-	k_sleep(K_MSEC(20));
+	k_sleep(K_MSEC(50));
 
 	return ret;
 }
@@ -730,11 +738,11 @@ static int mt9m114_init(const struct device *dev)
 		return -ENODEV;
 	}
 
-	ret = mt9m114_reset(cfg);
-	if (ret) {
-		LOG_ERR("Reset failed");
-		return -ENODEV;
-	}
+	//ret = mt9m114_reset(cfg);
+	//if (ret) {
+	//	LOG_ERR("Reset failed");
+	//	return -ENODEV;
+	//}
 
 	ret = mt9m114_read_reg(dev, MT9M114_CHIP_ID, sizeof(val), &val);
 	if (ret) {
@@ -747,11 +755,11 @@ static int mt9m114_init(const struct device *dev)
 		return -ENODEV;
 	}
 
-	ret = mt9m114_soft_reset(dev);
-	if (ret) {
-		LOG_ERR("SW reset failed");
-		return -ENODEV;
-	}
+	//ret = mt9m114_soft_reset(dev);
+	//if (ret) {
+	//	LOG_ERR("SW reset failed");
+	//	return -ENODEV;
+	//}
 
 	drv_data->fmt.pixelformat = VIDEO_PIX_FMT_UYVY;
 	drv_data->fmt.width = 640;
@@ -770,10 +778,17 @@ static int mt9m114_init(const struct device *dev)
 #if 1 /* Unique Instance */
 PINCTRL_DT_INST_DEFINE(0);
 
+#define MT9M114_GET_REGULATOR(node_id, prop, idx) \
+	DEVICE_DT_GET(DT_PROP_BY_IDX(node_id, prop, idx))
+
+static const struct device *power_regulators_0[] =
+{
+	DT_FOREACH_PROP_ELEM_SEP(DT_DRV_INST(0), regulator, MT9M114_GET_REGULATOR, (,))
+};
+
 static const struct mt9m114_config mt9m114_cfg_0 = {
 	.i2c = I2C_DT_SPEC_INST_GET(0),
 	.pincfg = PINCTRL_DT_INST_DEV_CONFIG_GET(0),
-	.exp_sel_gpio = GPIO_DT_SPEC_INST_GET(0, exp_sel_gpios),
 	.ctrl_dovdd_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_dovdd_gpios),
 	.ctrl_avdd_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_avdd_gpios),
 	.ctrl_dvdd_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_dvdd_gpios),
@@ -781,6 +796,8 @@ static const struct mt9m114_config mt9m114_cfg_0 = {
 	.ctrl_9509_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_9509_gpios),
 	.ctrl_4t245_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_4t245_gpios),
 	.ctrl_16t245_gpio = GPIO_DT_SPEC_INST_GET(0, ctrl_16t245_gpios),
+	.power_regulator_list = power_regulators_0,
+	.power_regulator_count = DT_INST_PROP_LEN(0, regulator),
 	.powerdown_gpio = GPIO_DT_SPEC_INST_GET(0, powerdown_gpios),
 	.reset_gpio = GPIO_DT_SPEC_INST_GET(0, reset_gpios),
 };

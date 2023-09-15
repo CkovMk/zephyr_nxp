@@ -4,6 +4,83 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/ {
+
+	//x_rpi_cam_int_power_seq: x_rpi_cam_int_power_seq {
+	//	compatible = "regulator-fixed-seq";
+	//	regulator-name = "mt9m114_power_seq";
+	//	enable-gpios = <&gpio_exp1 0 GPIO_ACTIVE_HIGH>, // 0, DOVDD
+	//				   <&gpio_exp1 1 GPIO_ACTIVE_HIGH>, // 1, AVDD
+	//				   <&gpio_exp1 2 GPIO_ACTIVE_HIGH>, // 2, DVDD
+	//				   <&gpio_exp1 3 GPIO_ACTIVE_HIGH>, // 3, EXTCLK
+	//	enable-gpio-names = "DOVDD",
+	//						"AVDD",
+	//						"DVDD",
+	//						"EXTCLK",
+	//	enable-seq = <0 1 2 3>;
+	//	enable-delay = <100 100 500 50000>;
+	//	disable-seq = <3 2 1 0>;
+	//	disable-delay = <1000 500 100 0>;
+	//	status = "okay";
+	//};
+
+	reg_rpi_cam_i2c_rdrv: reg_rpi_cam_i2c_rdrv {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_i2c_rdrv";
+		enable-gpios = <&gpio_exp1 4 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <0>;
+		off-on-delay-us = <0>;
+		regulator-boot-on;
+      	regulator-always-on;
+	};
+	reg_rpi_cam_gpio_rdrv4: reg_rpi_cam_gpio_rdrv4 {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_gpio_rdrv4";
+		enable-gpios = <&gpio_exp1 5 GPIO_ACTIVE_LOW>;
+		startup-delay-us = <0>;
+		off-on-delay-us = <0>;
+		regulator-boot-on;
+      	regulator-always-on;
+	};
+	reg_rpi_cam_gpio_rdrv16: reg_rpi_cam_gpio_rdrv16 {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_gpio_rdrv16";
+		enable-gpios = <&gpio_exp1 6 GPIO_ACTIVE_LOW>;
+		startup-delay-us = <0>;
+		off-on-delay-us = <0>;
+		regulator-boot-on;
+      	regulator-always-on;
+	};
+	reg_rpi_cam_dovdd: reg_rpi_cam_dovdd {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_dovdd";
+		enable-gpios = <&gpio_exp1 0 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <1000>;
+		off-on-delay-us = <1000>;
+	};
+	reg_rpi_cam_avdd: reg_rpi_cam_avdd {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_avdd";
+		enable-gpios = <&gpio_exp1 1 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <1000>;
+		off-on-delay-us = <1000>;
+	};
+	reg_rpi_cam_dvdd: reg_rpi_cam_dvdd {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_dvdd";
+		enable-gpios = <&gpio_exp1 2 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <10000>;
+		off-on-delay-us = <10000>;
+	};
+	reg_rpi_cam_extclk: reg_rpi_cam_extclk {
+		compatible = "regulator-fixed";
+		regulator-name = "reg_rpi_cam_extclk";
+		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <10000>;
+		off-on-delay-us = <10000>;
+	};
+};
+
 &lpi2c8 {
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_FAST>;
@@ -23,7 +100,6 @@
 		reg = <0x48>;
 		pinctrl-0 = <&pinmux_parallel_csi>;
 		pinctrl-names = "default";
-		exp-sel-gpios = <&gpio_exp0 4 GPIO_ACTIVE_HIGH>;
 		ctrl-dovdd-gpios = <&gpio_exp1 0 GPIO_ACTIVE_HIGH>;
 		ctrl-avdd-gpios = <&gpio_exp1 1 GPIO_ACTIVE_HIGH>;
 		ctrl-dvdd-gpios = <&gpio_exp1 2 GPIO_ACTIVE_HIGH>;
@@ -31,6 +107,14 @@
 		ctrl-9509-gpios = <&gpio_exp1 4 GPIO_ACTIVE_HIGH>;
 		ctrl-4t245-gpios = <&gpio_exp1 5 GPIO_ACTIVE_LOW>;
 		ctrl-16t245-gpios = <&gpio_exp1 6 GPIO_ACTIVE_LOW>;
+		//regulator = <&x_rpi_cam_int_power_seq>;
+		regulator = <&reg_rpi_cam_i2c_rdrv>,
+					<&reg_rpi_cam_gpio_rdrv4>,
+					<&reg_rpi_cam_gpio_rdrv16>,
+					<&reg_rpi_cam_dovdd>,
+					<&reg_rpi_cam_avdd>,
+					<&reg_rpi_cam_dvdd>,
+					<&reg_rpi_cam_extclk>;
 		powerdown-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
 		reset-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
 		status = "okay";
