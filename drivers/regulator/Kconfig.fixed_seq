@@ -1,0 +1,20 @@
+# Copyright 2023 NXP
+# SPDX-License-Identifier: Apache-2.0
+
+config REGULATOR_FIXED_SEQ
+	bool "Multiple-GPIO-controlled regulators with power sequence"
+	default y
+	depends on DT_HAS_REGULATOR_FIXED_SEQ_ENABLED
+	depends on GPIO
+	help
+	  Enable the driver for GPIO-controlled regulators
+
+if REGULATOR_FIXED_SEQ
+
+config REGULATOR_FIXED_SEQ_INIT_PRIORITY
+	int "Init priority"
+	default 75
+	help
+	  Device driver initialization priority
+
+endif # REGULATOR_FIXED_SEQ

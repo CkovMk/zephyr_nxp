@@ -1,0 +1,66 @@
+# Copyright 2019-2020 Peter Bigot Consulting, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+description: GPIO-controlled regulators with power sequence
+
+include:
+  - name: base.yaml
+  - name: regulator.yaml
+    property-allowlist:
+      - regulator-name
+      - regulator-boot-on
+      - regulator-always-on
+
+compatible: "regulator-fixed-seq"
+
+properties:
+  regulator-name:
+    required: true
+
+  enable-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO to use to enable/disable the regulator.
+
+      Unlike the gpio property in the Linux bindings this array must
+      provide the GPIO polarity and open-drain status in the phandle
+      selector.  The Linux enable-active-high and gpio-open-drain
+      properties are not valid for Zephyr devicetree files.
+
+  enable-gpio-names:
+    type: string-array
+    description: |
+      Name for enable-gpios.
+
+  enable-seq:
+    type: array
+    required: true
+    description: |
+      Power on sequence.
+
+      The number indicates the index of GPIO in enable-gpios array.
+
+  enable-delay:
+    type: array
+    required: true
+    description: |
+      Power on delay in microseconds for corresponding sequence.
+
+      The number indicates delay in microseconds after setting the gpio.
+
+  disable-seq:
+    type: array
+    required: true
+    description: |
+      Power off sequence.
+
+      See description for enable-seq.
+
+  disable-delay:
+    type: array
+    required: true
+    description: |
+      Power off delay in microseconds.
+
+      See description for enable-delay.
