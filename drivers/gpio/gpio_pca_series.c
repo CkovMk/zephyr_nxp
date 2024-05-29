@@ -881,6 +881,50 @@ void gpio_pca_series_cache_test(const struct device *dev)
 #endif /* GPIO_NXP_PCA_SERIES_DEBUG */
 
 /**
+ * @brief configure output drive strength
+ *
+ * @param dev
+ * @param pin
+ * @param strength
+ * @return int 0 if success
+ *             -EIO if i2c error
+ */
+static int gpio_pca_series_pin_drive_strength_configure(
+		const struct device *dev, gpio_pin_t pin,
+		enum gpio_pca_series_drive_strength strength)
+{
+	const struct gpio_pca_series_config *cfg = dev->config;
+	struct gpio_pca_series_data *data = dev->data;
+	int ret;
+	uint32_t reg_cfg_shift = pin << 1U;
+	uint64_t reg_cfg_mask = 0b11 << reg_cfg_shift;
+	uint64_t reg_value;
+
+	if ((cfg->part_cfg->flags & PCA_HAS_LATCH) == 0U) {
+		return -ENOTSUP;
+	}
+	/* Can't do I2C bus operations from an ISR */
+	if (k_is_in_isr()) {
+		return -EWOULDBLOCK;
+	}
+
+	k_sem_take(&data->lock, K_FOREVER);
+
+	ret = gpio_pca_series_reg_read_cache(dev, PCA_REG_TYPE_2B_OUTPUT_DRIVE_STRENGTH,
+						 (uint8_t *)&reg_value);
+	if (ret) {
+		goto out;
+	}
+	reg_value = (reg_value & (~reg_cfg_mask)) | (strength << reg_cfg_shift);
+	ret = gpio_pca_series_reg_write(dev, PCA_REG_TYPE_2B_OUTPUT_DRIVE_STRENGTH,
+					(uint8_t *)&reg_value);
+
+out:
+	k_sem_give(&data->lock);
+	return ret;
+}
+
+/**
  * }
  * gpio_pca_custom_api
  */
