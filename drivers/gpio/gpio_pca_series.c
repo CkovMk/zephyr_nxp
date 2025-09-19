@@ -1807,6 +1807,9 @@ static DEVICE_API(gpio, gpio_pca_series_api_funcs_standard) = {
 #endif
 };
 
+
+#ifdef CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE
+
 static DEVICE_API(gpio, gpio_pca_series_api_funcs_extended) = {
 	.pin_configure = gpio_pca_series_pin_configure,
 	.port_get_raw = gpio_pca_series_port_read_extended, /* special version used */
@@ -1819,6 +1822,8 @@ static DEVICE_API(gpio, gpio_pca_series_api_funcs_extended) = {
 	.manage_callback = gpio_pca_series_manage_callback,
 #endif
 };
+
+#endif /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
 
 /**
  * @brief Initialization function of pca_series
@@ -1889,11 +1894,16 @@ static int gpio_pca_series_init(const struct device *dev)
 	/** check the flags and init work obj */
 	const uint8_t check_flags = (PCA_HAS_LATCH | PCA_HAS_INT_MASK | PCA_HAS_INT_EXTEND);
 
+
+#ifdef CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE
 	if ((cfg->part_cfg->flags & check_flags) == check_flags) {
 		k_work_init(&data->int_work, gpio_pca_series_interrupt_worker_extended);
 	} else {
 		k_work_init(&data->int_work, gpio_pca_series_interrupt_worker_standard);
 	}
+#else /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
+	k_work_init(&data->int_work, gpio_pca_series_interrupt_worker_standard);
+#endif /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
 
 	/** Interrupt pin connected, enable interrupt */
 	if (cfg->gpio_int.port != NULL) {
@@ -1941,11 +1951,18 @@ out_bus:
 /**
  * @brief get device description by part_no
  */
+#ifdef CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE
 #define GPIO_PCA_GET_API_BY_PART_NO(part_no) ( \
 	(part_no == PCA_PART_NO_PCAL6524) ? &gpio_pca_series_api_funcs_extended : \
 	(part_no == PCA_PART_NO_PCAL6534) ? &gpio_pca_series_api_funcs_extended : \
 	&gpio_pca_series_api_funcs_standard \
 )
+#else /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
+#define GPIO_PCA_GET_API_BY_PART_NO(part_no) ( \
+	&gpio_pca_series_api_funcs_standard \
+)
+#endif /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
+
 #define GPIO_PCA_GET_PORT_NO_CFG_BY_PART_NO(part_no) (GPIO_PCA_PORT_NO_##part_no)
 #define GPIO_PCA_GET_PART_FLAG_BY_PART_NO(part_no) (GPIO_PCA_FLAG_##part_no)
 #define GPIO_PCA_GET_PART_CFG_BY_PART_NO(part_no) (GPIO_PCA_PART_CFG_##part_no)
@@ -2453,8 +2470,13 @@ const struct gpio_pca_series_part_config gpio_pca_series_part_cfg_pcal6416 = {
  *       ngpios     :   24, 32
  *       part_no    :   pcal6524 pcal6534
  */
+#ifdef CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE
 #define GPIO_PCA_SERIES_FLAG_TYPE_3 (PCA_HAS_LATCH | PCA_HAS_PULL | PCA_HAS_INT_MASK \
 		   | PCA_HAS_INT_EXTEND | PCA_HAS_OUT_CONFIG)
+#else /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
+#define GPIO_PCA_SERIES_FLAG_TYPE_3 (PCA_HAS_LATCH | PCA_HAS_PULL | PCA_HAS_INT_MASK \
+		   | PCA_HAS_OUT_CONFIG)
+#endif /* CONFIG_GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE */
 
 #ifdef CONFIG_GPIO_PCA_SERIES_CACHE_ALL
 /**

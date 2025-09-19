@@ -29,7 +29,7 @@ config GPIO_PCA_SERIES_INTERRUPT
 	depends on GPIO_PCA_SERIES
 	help
 	  Enable interrupt support in PCA_SERIES driver.
-	  Note that the PCA_SERIES cannot reliably detect
+	  Note that some devices this driver supports cannot reliably detect
 	  short-pulse interrupts due to its design.
 
 config GPIO_PCA_SERIES_CACHE_ALL
@@ -38,7 +38,16 @@ config GPIO_PCA_SERIES_CACHE_ALL
 	depends on GPIO_PCA_SERIES
 	help
 	  Cache all registers in RAM for faster configuration.
-	  Enabled by default.
 	  When disabled, only output registers will be cached.
-	  On devices w/o interrupt status, it will also cache
-	  input state.
+	  On devices w/o interrupt status, it will also cache input state to
+	  detect changes of pins status.
+
+config GPIO_PCA_SERIES_HAS_EXTENDED_DEVICE
+	bool "Extended device is enabled in Devicetree"
+	default y
+	depends on DT_HAS_NXP_PCAL6524_ENABLED || DT_HAS_NXP_PCAL6534_ENABLED
+	help
+	  Enable support for extended devices with interrupt edge and clear
+	  capabilities. If no such devices is present, this option is
+	  automatically disabled to reduce code size. You may also disable
+	  this option manually to enforce legacy interrupt handling.
