@@ -102,6 +102,12 @@
 		ngpios = <8>;
 		reset-gpios = <&gpio_exp0 20 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		status = "okay";
+		/**
+		 * The reset pin of this device is connected to gpio_exp0, which uses
+		 * the same init level. Must do deferred initialization after reset pin
+		 * is released.
+		 */
+		zephyr,deferred-init;
 	};
 };
 

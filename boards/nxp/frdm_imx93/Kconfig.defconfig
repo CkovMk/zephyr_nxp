@@ -11,6 +11,10 @@ if GPIO
 config I2C
 	default y
 
+# Deferred init is required for gpio_exp1
+config BOARD_FRDM_IMX93_GPIO_EXP1_INIT
+	default y
+
 endif # GPIO
 
 if CAN
